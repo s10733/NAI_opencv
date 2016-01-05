@@ -1,4 +1,3 @@
-
 #include <opencv2\opencv.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
@@ -44,11 +43,36 @@ int main(int, char**)
 		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
 		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
 		erode(imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+		//wyliczenie momentów progowych
+		Moments oMoments = moments(imgTres);
+		
+		double dM01 = oMoments.m01;
+		double dM10 = oMoments.m10;
+		double dArea = oMoments.m00;
 
+		//jeœli jest area jest wiêksze to znaczy ¿e jest obiekt na ekranie
+		if (dArea > 10000)
+		{
+			//wyliczenie pozycji obiektu na ekranie
+			int posX = dM10 / dArea;
+			int posY = dM01 / dArea;        
+        
+		   if (iLastX >= 0 && iLastY >= 0 && posX >= 0 && posY >= 0)
+		   {
+			//rysowanie od pocz¹tku do koñca lini.
+			line(imgLines, Point(posX, posY), Point(iLastX, iLastY), Scalar(0,0,255), 2);
+		   }
+   
+		   iLastX = posX;
+		   iLastY = posY;
+		}
+		
 		namedWindow( "oryginal", WINDOW_AUTOSIZE );
 		imshow("oryginal",frame);
 		namedWindow( "wykryty czerwony", WINDOW_AUTOSIZE );
 		imshow("wykryty czerwony",imgTres);
+		namedWindow("linia", WINDOW_AUTOSIZE);
+		imshow("linia",imgLines);
 	}
 
 }
