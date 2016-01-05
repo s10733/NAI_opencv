@@ -13,15 +13,37 @@ int main(int, char**)
 {
 	Mat frame;
 	Mat frame2;
+	Mat imgTemp;
+	Mat imgLines;
 	VideoCapture cap(0); 
     if(!cap.isOpened())  
 		return -1;
+	
+	int iLowH = 170;
+	int iHighH = 179;
+
+	int iLowS = 150; 
+	int iHighS = 255;
+
+	int iLowV = 60;
+	int iHighV = 255;
+	
+	int iLastX = -1; 
+	int iLastY = -1;
+	cap.read(imgTemp);
+	imgLines = Mat::zeros(imgTemp.size(),CV_8UC3);
 	while (waitKey(30) !=27){
-		
-		
-	cap>>frame;
-	namedWindow( "oryginal", WINDOW_AUTOSIZE );	
-	imshow("oryginal",frame);
+		cap>>frame;
+		cvtColor(frame,frame2,COLOR_BGR2HSV);
+		//wydzielenie czerwonego obrazu;
+		Mat imgTres;
+		inRange(frame2,Scalar(iLowH,iLowS,iLowV),Scalar(iHighH,iHighS,iHighV),imgTres);
+
+
+		namedWindow( "oryginal", WINDOW_AUTOSIZE );
+		imshow("oryginal",frame);
+		namedWindow( "wykryty czerwony", WINDOW_AUTOSIZE );
+		imshow("wykryty czerwony",imgTres);
 	}
 
 }
