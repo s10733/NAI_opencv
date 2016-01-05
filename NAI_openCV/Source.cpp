@@ -1,3 +1,4 @@
+
 #include <opencv2\opencv.hpp>
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
@@ -38,7 +39,11 @@ int main(int, char**)
 		//wydzielenie czerwonego obrazu;
 		Mat imgTres;
 		inRange(frame2,Scalar(iLowH,iLowS,iLowV),Scalar(iHighH,iHighS,iHighV),imgTres);
-
+		//usuniêcie wszystkich ma³ych obiektów tak by tylko bylo widac wykryty
+		erode(imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
+		erode(imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
 
 		namedWindow( "oryginal", WINDOW_AUTOSIZE );
 		imshow("oryginal",frame);
