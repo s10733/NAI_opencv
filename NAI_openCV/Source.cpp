@@ -66,13 +66,23 @@ int main(int, char**)
 		   iLastX = posX;
 		   iLastY = posY;
 		}
-		
 		namedWindow( "oryginal", WINDOW_AUTOSIZE );
 		imshow("oryginal",frame);
 		namedWindow( "wykryty czerwony", WINDOW_AUTOSIZE );
 		imshow("wykryty czerwony",imgTres);
 		namedWindow("linia", WINDOW_AUTOSIZE);
 		imshow("linia",imgLines);
+		
+		vector<int> compression_params;
+		compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+		compression_params.push_back(9);
+		
+		if(waitKey(10)!=27){
+			Mat RGB;
+			cvtColor(frame+imgLines,RGB,CV_RGB2HLS);
+			imwrite("C:/Users/£ukasz/Desktop/Nowy folder/ima.png",RGB, compression_params);
+		}
+		
 	}
 
 }
