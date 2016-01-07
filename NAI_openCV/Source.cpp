@@ -7,6 +7,13 @@
 #include <conio.h>
 using namespace cv;
 using namespace std;
+void drawLine();
+
+
+Mat img_rgb,img_gray,canny_output,drawing;
+
+int thresh = 100;
+int max_thresh = 255;
 
 
 int main(int, char**)
@@ -82,7 +89,23 @@ int main(int, char**)
 			cvtColor(frame+imgLines,RGB,CV_RGB2HLS);
 			imwrite("C:/Users/£ukasz/Desktop/Nowy folder/ima.png",RGB, compression_params);
 		}
+
 		
 	}
+	while(true){
+		destroyWindow("oryginal");
+		destroyWindow("linia");
+		destroyWindow("wykryty czerwony");
+		img_rgb  = imread("C:/Users/£ukasz/Desktop/Nowy folder/ima.png");
+		cvtColor(img_rgb,img_gray,CV_RGB2GRAY);
+		imshow("InputImage",img_rgb);
+		drawLine();
+		(waitKey(10)!=27);
+	}   
 
 }
+void drawLine(){
+	Canny( img_gray, canny_output, thresh, thresh*2, 3 );
+    imshow("Canny",canny_output);
+}
+
