@@ -10,7 +10,7 @@ using namespace std;
 void drawLine();
 void drawTriangles(Mat&, const vector< vector<Point> >&);
 
-Mat img_rgb,img_gray,canny_output,drawing;
+Mat frame,frame2,imgTemp,imgLines,img_rgb,img_gray,canny_output,drawing;
 
 int thresh = 100;
 int max_thresh = 255;
@@ -18,10 +18,6 @@ int max_thresh = 255;
 
 int main(int, char**)
 {
-	Mat frame;
-	Mat frame2;
-	Mat imgTemp;
-	Mat imgLines;
 	VideoCapture cap(0); 
     if(!cap.isOpened())  
 		return -1;
@@ -45,11 +41,7 @@ int main(int, char**)
 		//wydzielenie czerwonego obrazu;
 		Mat imgTres;
 		inRange(frame2,Scalar(iLowH,iLowS,iLowV),Scalar(iHighH,iHighS,iHighV),imgTres);
-		//usuniêcie wszystkich ma³ych obiektów tak by tylko bylo widac wykryty
-		erode(imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-		dilate( imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) ); 
-		erode(imgTres, imgTres, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)) );
+		
 		//wyliczenie momentów progowych
 		Moments oMoments = moments(imgTres);
 		
@@ -106,10 +98,10 @@ int main(int, char**)
 }
 void drawLine(){
 	vector<vector<Point> > contours;
-    vector<Vec4i> hierarchy;
+   
 	Canny( img_gray, canny_output, thresh, thresh*2, 3 );
     imshow("Kontury",canny_output);
-    findContours( canny_output, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
+    findContours( canny_output, contours, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
     drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
 
     drawTriangles(drawing,contours);
