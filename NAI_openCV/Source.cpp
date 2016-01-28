@@ -13,13 +13,13 @@ Mat frame,frame2,imgTemp,imgLines,img_rgb,img_gray,canny_output,drawing;
 int main(int, char**)
 {
 	VideoCapture cap(0); 
-    if(!cap.isOpened())  
+    if(!cap.isOpened()){
 		return -1;
+	}
 
 	int iLastX = -1; 
 	int iLastY = -1;
-	
-	 
+
 	cap.read(imgTemp);
 	imgLines = Mat::zeros(imgTemp.size(),CV_8UC3);
 	while (waitKey(30) !=27){
@@ -29,14 +29,14 @@ int main(int, char**)
 		Mat imgTres;
 		inRange(frame2,Scalar(0,109,176),Scalar(10,144,249),imgTres);
 		
-		//wyliczenie momentów progowych
+	
 		Moments oMoments = moments(imgTres);
 		
 		double dM01 = oMoments.m01;
 		double dM10 = oMoments.m10;
 		double dArea = oMoments.m00;
 
-		//jeœli jest area jest wiêksze to znaczy ¿e jest obiekt na ekranie
+		
 		if (dArea > 10000)
 		{
 			//wyliczenie pozycji obiektu na ekranie
@@ -59,14 +59,11 @@ int main(int, char**)
 		namedWindow("linia", WINDOW_AUTOSIZE);
 		imshow("linia",imgLines);
 		
-		vector<int> compression_params;
-		compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-		compression_params.push_back(9);
 		
 		if(waitKey(10)!=27){
 			Mat RGB;
 			cvtColor(frame+imgLines,RGB,CV_RGB2HLS);
-			imwrite("C:/Users/£ukasz/Desktop/Nowy folder/ima.png",RGB, compression_params);
+			imwrite("C:/Users/£ukasz/Desktop/Nowy folder/ima.png",RGB);
 		}
 
 		
@@ -85,20 +82,14 @@ int main(int, char**)
 		vector<vector<Point> > contours;
 		findContours( canny_output, contours, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0, 0) );
 		drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
-
 		vector<Point> approxTriangle;
-		for(size_t i = 0; i < contours.size(); i++){
+		for(int i = 0; i < contours.size(); i++){
         approxPolyDP(contours[i], approxTriangle, arcLength(Mat(contours[i]), true)*0.05, true);
         if(approxTriangle.size() ==3){
-            drawContours(drawing, contours, i, Scalar(0, 255, 255), CV_FILLED); 
-            vector<Point>::iterator vertex;
-            for(vertex = approxTriangle.begin(); vertex != approxTriangle.end(); ++vertex){
-                circle(drawing, *vertex, 3, Scalar(0, 0, 255), 1);
-            }
-        }
+            drawContours(drawing, contours, i, Scalar(0, 255, 255), CV_FILLED);
+		}
 	 }
-
-    imshow("Trojkaty",drawing);;
+		imshow("Trojkaty",drawing);
 		(waitKey(10)!=27);
 	}   
 
